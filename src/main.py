@@ -65,5 +65,21 @@ class TestExamples(unittest.TestCase):
 
         self.driver.close()
 
+    def test_self_checkin(self):
+        self.driver = webdriver.Chrome()
+        self.wait = WebDriverWait(self.driver, 100)
+
+        self.driver.get("https://examples.abstra.run/b0a39028-1988-42c8-b04b-b230c70c9bb3")
+        self.wait.until(EC.title_is('Self check-in'))
+        self.next()
+
+        self.fill_text('Welcome to Dr', 'Abstra')
+        self.fill_text('What is your last name?', 'Bot')
+        self.fill_text('What is your middle initial?', '')
+        self.fill_text('Ok. What is your email?', 'abstra@bot.com')
+
+        self.driver.close()
+
+
 if __name__ == '__main__':
     unittest.main()
