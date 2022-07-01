@@ -158,6 +158,29 @@ class TestExamples(unittest.TestCase):
         self.expect_closing_text(
             "Thanks, Abstra Bot! You're checked in and ready to go.")
 
+    def test_purchase_requester(self):
+        self.driver = webdriver.Chrome()
+        self.wait = WebDriverWait(self.driver, 100)
+
+        self.driver.get(
+            "https://examples.abstra.run/f036497f-4069-4010-b7a8-2ebed126d872")
+        self.wait.until(EC.title_is('Purchase Requester'))
+        self.next()
+
+        self.expect_text('Hi! Welcome to our Purchase Requester.')
+        self.fill_text('What is the title of this expense?',
+                       'Figura de ação do naruto')
+        self.fill_text('How much was this expense?', '100')
+        self.fill_option('Is this a monthly recurring expense?', 'no')
+        self.fill_option(
+            'To which department does this expense belong?', 'Engineering')
+        self.fill_text('Briefly describe what this expense is for.',
+                       'Melhorar a moral da equipe')
+        self.fill_option('What type of expense is this?', 'misc')
+        self.fill_text('When is this expense due?', '30/05/2022')
+        self.expect_closing_text(
+            "We've registered this expense succesfully. Thanks! See ya next time.")
+
 
 if __name__ == '__main__':
     unittest.main()
