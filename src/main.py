@@ -61,24 +61,18 @@ class TestExamples(unittest.TestCase):
 
     def fill_phone(self, label, value, next=True, placeholder="(000)000-0000"):
         selector = f'//div[contains(@class,"label") and contains(.,"{label}")]'
-        elem = self.wait.until(
-            EC.element_to_be_clickable((By.XPATH, selector)))
-        self.assertIn(label, elem.text)
+        self.check_if_exists(selector)
         selector = f'//input[contains(@class,"input") and contains(@placeholder,"{placeholder}")]'
-        elem = self.wait.until(
-            EC.element_to_be_clickable((By.XPATH, selector)))
+        elem = self.check_if_exists(selector)
         elem.send_keys(value)
         if next:
             self.next()
 
     def fill_date(self, label, value, next=True):
         selector = f'//div[contains(@class,"label") and contains(.,"{label}")]'
-        elem = self.wait.until(
-            EC.element_to_be_clickable((By.XPATH, selector)))
-        self.assertIn(label, elem.text)
+        self.check_if_exists(selector)
         selector = f'//input[contains(@class,"input") and contains(@type,"date")]'
-        elem = self.wait.until(
-            EC.element_to_be_clickable((By.XPATH, selector)))
+        elem = self.check_if_exists(selector)
         elem.send_keys(value)
         if next:
             self.next()
@@ -108,13 +102,9 @@ class TestExamples(unittest.TestCase):
 
     def fill_dropdown(self, label, value, next=True):
         selector = f'//div[contains(@class,"label") and contains(.,"{label}")]'
-        elem = self.wait.until(
-            EC.element_to_be_clickable((By.XPATH, selector))
-        )
-        self.assertIn(label, elem.text)
+        self.check_if_exists(selector)
         selector = f'//li[contains(@class,"vs__dropdown-option") and contains(.,"{value}")]'
-        elem = self.wait.until(
-            EC.element_to_be_clickable((By.XPATH, selector)))
+        elem = self.check_if_exists(selector)
         elem.click()
         if next:
             self.next()
@@ -126,7 +116,7 @@ class TestExamples(unittest.TestCase):
 
     def test_simple_quiz(self):
         self.driver = webdriver.Chrome()
-        self.wait = WebDriverWait(self.driver, 100)
+        self.wait = WebDriverWait(self.driver, 10)
 
         self.driver.get(
             "https://examples.abstra.run/8e174c9a-ffe7-44fe-9950-ceafbd7c4bec")
@@ -155,7 +145,7 @@ class TestExamples(unittest.TestCase):
 
     def test_self_checkin(self):
         self.driver = webdriver.Chrome()
-        self.wait = WebDriverWait(self.driver, 100)
+        self.wait = WebDriverWait(self.driver, 10)
 
         self.driver.get(
             "https://examples.abstra.run/b0a39028-1988-42c8-b04b-b230c70c9bb3")
@@ -214,7 +204,7 @@ class TestExamples(unittest.TestCase):
 
     def test_purchase_requester(self):
         self.driver = webdriver.Chrome()
-        self.wait = WebDriverWait(self.driver, 100)
+        self.wait = WebDriverWait(self.driver, 10)
 
         self.driver.get(
             "https://examples.abstra.run/f036497f-4069-4010-b7a8-2ebed126d872")
@@ -267,6 +257,63 @@ class TestExamples(unittest.TestCase):
             'The amount payable for this invoice is $510.0.', False)
 
         self.driver.close()
+
+    def test_buying_intention_form(self):
+        self.driver = webdriver.Chrome()
+        self.wait = WebDriverWait(self.driver, 10)
+
+        self.driver.get(
+            "https://examples.abstra.run/2ef3700b-9d75-49bb-9c60-7924a0cb8c19")
+        self.wait.until(EC.title_is('Upgrade Abstra Cloud'))
+        self.next()
+
+        self.expect_text(
+            'Thank you for showing interest in our standard plan. We need some informations to get in touch.')
+        self.fill_text('Name', 'Abstra Bot')
+        self.fill_text('Email', 'abstra_bot@teste.com',
+                       placeholder="Your email here")
+        self.fill_text('Company name', 'Abstra')
+
+    def test_subscribe_to_feature(self):
+        self.driver = webdriver.Chrome()
+        self.wait = WebDriverWait(self.driver, 10)
+
+        self.driver.get(
+            "https://examples.abstra.run/b871dce9-8a1d-4511-aa64-cc857e7a3950")
+        self.wait.until(EC.title_is('Subscribe to Feature'))
+        self.next()
+
+        self.expect_text(
+            'Hi there. Thanks for your interest in our upcoming features!')
+        self.expect_text(
+            "We're almost ready to launch. Let's sign you up to get the news first-hand.")
+        self.fill_text('Firstly, what is your first name?', 'Abstra')
+        self.fill_text('What is your last name?', 'Bot')
+        self.fill_text("Great! What's your email?", 'abstra_bot@teste.com')
+        self.expect_text(
+            "All set, Abstra! You'll be notified as soon as we launch 😎🚀", False)
+        self.driver.close()
+
+    def test_vacation_approval(self):
+        self.driver = webdriver.Chrome()
+        self.wait = WebDriverWait(self.driver, 10)
+
+        self.driver.get(
+            "https://examples.abstra.run/842f9872-59fd-4735-8b9a-4e6f5065a96e")
+        self.wait.until(EC.title_is('Vacation Approval'))
+        self.next()
+
+        self.expect_text(
+            'Hi there! You have a new vacation request.')
+        self.expect_text(
+            'Abby from the Marketing team has requested 15 days of vacation, from 08/18/22 to 09/02/22.')
+        self.expect_text(
+            'They’ve taken 12 days off in the last 12 months and have 18 remaining days to request, according to company policy.')
+        self.fill_option(
+            'Do you approve this request for 15 days starting 08/18/22?', 'Yes')
+        self.expect_text("We've registered your approval successfully!")
+        self.expect_link("Click here to add Abby's vacation to your calendar",
+                         'https://calendar.google.com/calendar/render?action=TEMPLATE&')
 
 
 if __name__ == '__main__':
