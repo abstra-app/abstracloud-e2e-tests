@@ -32,6 +32,14 @@ class TestExamples(unittest.TestCase):
         if next:
             self.next()
 
+    def expect_file(self, content, downloadUrl, next=True):
+        selector = f'//a[contains(@href, "{downloadUrl}") and contains(.,"{content}")]'
+        elem = self.check_if_exists(selector)
+        if elem is False:
+            self.fail(f'File {content} not found')
+        if next:
+            self.next()
+
     def expect_panda_table(self, columns, next=True):
         for index, column in enumerate(columns):
             selector = f'//table/thead/tr/th[{index+2}]'
@@ -77,16 +85,22 @@ class TestExamples(unittest.TestCase):
         if next:
             self.next()
 
-    def fill_option(self, label, value, next=True):
+    def fill_option(self, label, value, next=True, buttonText="Next"):
         elem = self.wait.until(
             EC.element_to_be_clickable((By.CLASS_NAME, 'label')))
         self.assertIn(label, elem.text)
-        selector = f'//div[contains(@class,"radiobox") and contains(.,"{value}")]'
-        elem = self.wait.until(
-            EC.element_to_be_clickable((By.XPATH, selector)))
-        elem.click()
-        if next:
-            self.next()
+        if buttonText:
+            selector = f'//div[contains(@class,"radiobox") and contains(.,"{value}")]'
+            elem = self.wait.until(
+                EC.element_to_be_clickable((By.XPATH, selector)))
+            elem.click()
+            if next:
+                self.next()
+        else:
+            selector = f'//div[contains(@class,"multiple-choice-button") and contains(.,"{value}")]'
+            elem = self.wait.until(
+                EC.element_to_be_clickable((By.XPATH, selector)))
+            elem.click()
 
     def fill_multiple_options(self, label, values, next=True):
         elem = self.wait.until(
@@ -105,6 +119,19 @@ class TestExamples(unittest.TestCase):
         self.check_if_exists(selector)
         selector = f'//li[contains(@class,"vs__dropdown-option") and contains(.,"{value}")]'
         elem = self.check_if_exists(selector)
+        elem.click()
+        if next:
+            self.next()
+
+    def fill_card(self, label, value, next=True):
+        selector = f'//div[contains(@class,"label") and contains(.,"{label}")]'
+        response = self.check_if_exists(selector)
+        if response is False:
+            self.fail(f'Label {label} not found')
+        selector = f'//h3[contains(@class,"card-title") and contains(.,"{value}")]'
+        elem = self.check_if_exists(selector)
+        if elem is False:
+            self.fail(f'Card {value} not found')
         elem.click()
         if next:
             self.next()
@@ -313,7 +340,58 @@ class TestExamples(unittest.TestCase):
             'Do you approve this request for 15 days starting 08/18/22?', 'Yes')
         self.expect_text("We've registered your approval successfully!")
         self.expect_link("Click here to add Abby's vacation to your calendar",
-                         'https://calendar.google.com/calendar/render?action=TEMPLATE&')
+                         'https://calendar.google.com/calendar/render?action=TEMPLATE&dates=20220818%2F20220902&details=Enjoy%21&text=Abby%27s+Vacation')
+        self.driver.close()
+
+    def test_certificate_maker(self):
+        self.driver = webdriver.Chrome()
+        self.wait = WebDriverWait(self.driver, 10)
+
+        self.driver.get(
+            "https://examples.abstra.run/82f4a14b-1494-4818-8455-cb6c76af08eb")
+        self.wait.until(EC.title_is('Certificate Maker'))
+        self.next()
+
+        self.expect_text(
+            "Quick tip before we begin: make sure you have the correct file in your workspace's file system.")
+        self.expect_text(
+            'Welcome to our Certificate Maker!')
+        self.fill_option(
+            'Do you want to generate a single certificate or multiple, from a spreadsheet?', 'single', buttonText=None)
+        self.fill_text('What is the course name?', 'Python')
+        self.fill_text('How many hours does this course account for?', '10')
+        self.fill_date('What date should be on the certificate?', '2020-01-01')
+        self.fill_text("What is the student's full name?", 'Abstra Bot')
+        self.expect_text('All done! Your certificate is ready! 🧑‍🎓', False)
+        self.expect_file('Download here', 'generated_certificate.docx')
+        self.driver.close()
+
+    def test_dev_marketplace(self):
+        self.driver = webdriver.Chrome()
+        self.wait = WebDriverWait(self.driver, 10)
+
+        self.driver.get(
+            "https://examples.abstra.run/33ddb3d0-af07-4f35-84fb-65e30125fd06")
+        self.wait.until(EC.title_is('Dev Marketplace'))
+        self.next()
+
+        self.expect_text('Hey there. Welcome to our marketplace.')
+        self.fill_option('What are you looking for today?',
+                         "I'm a dev, looking for a job opening")
+        self.fill_option("Very cool. What do you need?",
+                         "I'd like to check out the job board.")
+        self.fill_option(
+            'Do you want to view the whole board or add a filter?', 'Add a filter')
+        self.fill_option('What would you like to filter by?',
+                         'Seniority needed')
+        self.fill_dropdown('What is your seniority?', 'Senior')
+        self.fill_card(
+            'Select your desired job to get in touch with the company:', 'Database Tech')
+        self.expect_text(
+            "Love to see it. We're sending an email to connect you and the company right now. Be sure to check your inbox in the next few minutes.")
+        self.expect_link('If you have any questions, you can get in touch with us here.',
+                         'https://meetings.hubspot.com/sophia-faria/abstra-cloud-onboarding')
+        self.driver.close()
 
 
 if __name__ == '__main__':
