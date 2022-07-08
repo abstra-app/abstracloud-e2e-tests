@@ -138,10 +138,15 @@ class TestExamples(unittest.TestCase):
         response = self.check_if_exists(selector)
         if response is False:
             self.fail(f'Label {label} not found')
-        selector = f'//div[contains(@id, "{type+index}")]//li[contains(@class,"vs__dropdown-option") and contains(.,"{value}")]'
+        selector = f'//div[contains(@id, "{type+index}")]//div[contains(@class, "v-select")]'
+        elem = self.check_if_exists(selector)
+        elem.click()
+        if elem is False:
+            self.fail(f'Dropdown Button {value} not found')
+        selector = f'//li[contains(@class,"vs__dropdown-option") and contains(.,"{value}")]'
         elem = self.check_if_exists(selector)
         if elem is False:
-            self.fail(f'Dropdown {value} not found')
+            self.fail(f'Dropdown Option {value} not found')
         elem.click()
         if next:
             self.next()
@@ -156,6 +161,19 @@ class TestExamples(unittest.TestCase):
         if elem is False:
             self.fail(f'Card {value} not found')
         elem.click()
+        if next:
+            self.next()
+
+    def fill_file(self, label, value,  next=True, type='file-input', index="0"):
+        selector = f'//div[contains(@class,"label") and contains(.,"{label}")]'
+        response = self.check_if_exists(selector)
+        if response is False:
+            self.fail(f'Label {label} not found')
+        selector = f'//div[contains(@id, "{type+index}")]//input[contains(@class,"input") and contains(@type,"file")]'
+        elem = self.check_if_exists(selector)
+        if elem is False:
+            self.fail(f'File input not found')
+        elem.send_keys(value)
         if next:
             self.next()
 
@@ -446,6 +464,45 @@ class TestExamples(unittest.TestCase):
         self.expect_text('Csll: R$ 9.09', False)
         self.expect_text('Irpj: R$ 45.45', False)
         self.expect_text('Pis: R$ 18.18')
+        self.driver.close()
+
+    # def test_insert_saving_incomes(self):
+    #     self.driver = webdriver.Chrome()
+    #     self.wait = WebDriverWait(self.driver, 10)
+
+    #     self.driver.get(
+    #         f"{EXAMPLE_DOMAIN}/9636b0b4-7cdc-4ae7-9762-8f939555d2f9")
+    #     self.wait.until(EC.title_is('Insert income savings'))
+    #     self.next()
+
+    #     self.expect_text('Hey there.')
+    #     self.fill_file('Upload your .xlsx file',
+    #                    '/Users/leonardoribeiro/Downloads/tests-example.xls')
+    #     self.expect_text(
+    #         "All your savings income info has been inputed. Simple as that", False)
+    #     self.driver.close()
+
+    def test_customer_registration(self):
+        self.driver = webdriver.Chrome()
+        self.wait = WebDriverWait(self.driver, 10)
+
+        self.driver.get(
+            f"{EXAMPLE_DOMAIN}/81e15ebb-40bf-444e-8c83-35aafbc033b9")
+        self.wait.until(EC.title_is('Customer registration'))
+        self.next()
+
+        self.fill_option(
+            'Hello! Before continuing, what would you like to do?', 'Register a new customer',)
+        self.fill_text('Name', 'Abstra', False, index="0")
+        self.fill_text('Email', 'email@abstra.app', False,
+                       'Your email here', 'email-input', "1")
+        self.fill_dropdown('Legal entity', 'Physical', False, index="2")
+        self.fill_dropdown('Payment Frequency', 'Monthly', False, index="3")
+        self.fill_dropdown('Payment Method', 'Credit card', False, index="4")
+        self.fill_text('Country', 'Brazil', False, index="5")
+        self.fill_date('Registration date', '2020-01-01', index="6")
+        self.expect_text(
+            'Perfecto. Your new customer has been registered 😎', False)
         self.driver.close()
 
 
