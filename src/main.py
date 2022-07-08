@@ -5,7 +5,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-
+EXAMPLE_DOMAIN="https://examples.abstra.run"
 class TestExamples(unittest.TestCase):
     def check_if_exists(self, selector):
         try:
@@ -146,7 +146,7 @@ class TestExamples(unittest.TestCase):
         self.wait = WebDriverWait(self.driver, 10)
 
         self.driver.get(
-            "https://examples.abstra.run/8e174c9a-ffe7-44fe-9950-ceafbd7c4bec")
+            f"{EXAMPLE_DOMAIN}/8e174c9a-ffe7-44fe-9950-ceafbd7c4bec")
         self.wait.until(EC.title_is('Simple quiz'))
         self.next()
 
@@ -175,7 +175,7 @@ class TestExamples(unittest.TestCase):
         self.wait = WebDriverWait(self.driver, 10)
 
         self.driver.get(
-            "https://examples.abstra.run/b0a39028-1988-42c8-b04b-b230c70c9bb3")
+            f"{EXAMPLE_DOMAIN}/b0a39028-1988-42c8-b04b-b230c70c9bb3")
         self.wait.until(EC.title_is('Self check-in'))
         self.next()
 
@@ -234,7 +234,7 @@ class TestExamples(unittest.TestCase):
         self.wait = WebDriverWait(self.driver, 10)
 
         self.driver.get(
-            "https://examples.abstra.run/f036497f-4069-4010-b7a8-2ebed126d872")
+            f"{EXAMPLE_DOMAIN}/f036497f-4069-4010-b7a8-2ebed126d872")
         self.wait.until(EC.title_is('Purchase Requester'))
         self.next()
 
@@ -258,7 +258,7 @@ class TestExamples(unittest.TestCase):
         self.wait = WebDriverWait(self.driver, 10)
 
         self.driver.get(
-            "https://examples.abstra.run/56aee472-37a9-49e7-8f4b-9460c84dbc92")
+            f"{EXAMPLE_DOMAIN}/56aee472-37a9-49e7-8f4b-9460c84dbc92")
         self.wait.until(EC.title_is('Invoice Factoring Calculator'))
         self.next()
 
@@ -290,7 +290,7 @@ class TestExamples(unittest.TestCase):
         self.wait = WebDriverWait(self.driver, 10)
 
         self.driver.get(
-            "https://examples.abstra.run/2ef3700b-9d75-49bb-9c60-7924a0cb8c19")
+            f"{EXAMPLE_DOMAIN}/2ef3700b-9d75-49bb-9c60-7924a0cb8c19")
         self.wait.until(EC.title_is('Upgrade Abstra Cloud'))
         self.next()
 
@@ -306,7 +306,7 @@ class TestExamples(unittest.TestCase):
         self.wait = WebDriverWait(self.driver, 10)
 
         self.driver.get(
-            "https://examples.abstra.run/b871dce9-8a1d-4511-aa64-cc857e7a3950")
+            f"{EXAMPLE_DOMAIN}/b871dce9-8a1d-4511-aa64-cc857e7a3950")
         self.wait.until(EC.title_is('Subscribe to Feature'))
         self.next()
 
@@ -326,7 +326,7 @@ class TestExamples(unittest.TestCase):
         self.wait = WebDriverWait(self.driver, 10)
 
         self.driver.get(
-            "https://examples.abstra.run/842f9872-59fd-4735-8b9a-4e6f5065a96e")
+            f"{EXAMPLE_DOMAIN}/842f9872-59fd-4735-8b9a-4e6f5065a96e")
         self.wait.until(EC.title_is('Vacation Approval'))
         self.next()
 
@@ -348,7 +348,7 @@ class TestExamples(unittest.TestCase):
         self.wait = WebDriverWait(self.driver, 10)
 
         self.driver.get(
-            "https://examples.abstra.run/82f4a14b-1494-4818-8455-cb6c76af08eb")
+            f"{EXAMPLE_DOMAIN}/82f4a14b-1494-4818-8455-cb6c76af08eb")
         self.wait.until(EC.title_is('Certificate Maker'))
         self.next()
 
@@ -371,7 +371,7 @@ class TestExamples(unittest.TestCase):
         self.wait = WebDriverWait(self.driver, 10)
 
         self.driver.get(
-            "https://examples.abstra.run/33ddb3d0-af07-4f35-84fb-65e30125fd06")
+            f"{EXAMPLE_DOMAIN}/33ddb3d0-af07-4f35-84fb-65e30125fd06")
         self.wait.until(EC.title_is('Dev Marketplace'))
         self.next()
 
