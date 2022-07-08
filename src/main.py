@@ -5,7 +5,9 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-EXAMPLE_DOMAIN="https://examples.abstra.run"
+EXAMPLE_DOMAIN = "https://examples.abstra.run"
+
+
 class TestExamples(unittest.TestCase):
     def check_if_exists(self, selector):
         try:
@@ -20,7 +22,6 @@ class TestExamples(unittest.TestCase):
         response = self.check_if_exists(selector)
         if response is False:
             self.fail(f'Text {content} not found')
-
         if next:
             self.next()
 
@@ -49,50 +50,66 @@ class TestExamples(unittest.TestCase):
         if next:
             self.next()
 
-    def fill_text(self, label, value, next=True, placeholder="Your answer here"):
+    def fill_text(self, label, value, next=True, placeholder="Your answer here", type="text-input", index="0"):
         selector = f'//div[contains(@class,"label") and contains(.,"{label}")]'
-        self.check_if_exists(selector)
-        selector = f'//input[contains(@class,"input") and contains(@placeholder,"{placeholder}")]'
+        response = self.check_if_exists(selector)
+        if response is False:
+            self.fail(f'Label {label} not found')
+        selector = f'//div[contains(@id, "{type+index}")]//input[contains(@class,"input") and contains(@placeholder,"{placeholder}")]'
         elem = self.check_if_exists(selector)
+        if elem is False:
+            self.fail(f'Text input not found')
         elem.send_keys(value)
         if next:
             self.next()
 
-    def fill_textarea(self, label, value, next=True, placeholder="Your answer here"):
+    def fill_textarea(self, label, value, next=True, placeholder="Your answer here", type="textarea-input", index="0"):
         selector = f'//div[contains(@class,"label") and contains(.,"{label}")]'
         self.check_if_exists(selector)
-        selector = f'//textarea[contains(@class,"input") and contains(@placeholder,"{placeholder}")]'
+        selector = f'//div[contains(@id, "{type+index}")]//textarea[contains(@class,"input") and contains(@placeholder,"{placeholder}")]'
         elem = self.check_if_exists(selector)
+        if elem is False:
+            self.fail(f'TextArea input not found')
         elem.send_keys(value)
         if next:
             self.next()
 
-    def fill_phone(self, label, value, next=True, placeholder="(000)000-0000"):
+    def fill_phone(self, label, value, next=True, placeholder="(000)000-0000", type="phone-input", index="0"):
         selector = f'//div[contains(@class,"label") and contains(.,"{label}")]'
-        self.check_if_exists(selector)
-        selector = f'//input[contains(@class,"input") and contains(@placeholder,"{placeholder}")]'
+        response = self.check_if_exists(selector)
+        if response is False:
+            self.fail(f'Label {label} not found')
+        selector = f'//div[contains(@id, "{type+index}")]//input[contains(@class,"input") and contains(@placeholder,"{placeholder}")]'
         elem = self.check_if_exists(selector)
+        if elem is False:
+            self.fail(f'Phone input not found')
         elem.send_keys(value)
         if next:
             self.next()
 
-    def fill_date(self, label, value, next=True):
+    def fill_date(self, label, value, next=True, type="date-input", index="0"):
         selector = f'//div[contains(@class,"label") and contains(.,"{label}")]'
-        self.check_if_exists(selector)
-        selector = f'//input[contains(@class,"input") and contains(@type,"date")]'
+        response = self.check_if_exists(selector)
+        if response is False:
+            self.fail(f'Label {label} not found')
+        selector = f'//div[contains(@id, "{type+index}")]//input[contains(@class,"input") and contains(@type,"date")]'
         elem = self.check_if_exists(selector)
+        if elem is False:
+            self.fail(f'Date input not found')
         elem.send_keys(value)
         if next:
             self.next()
 
-    def fill_option(self, label, value, next=True, buttonText="Next"):
-        elem = self.wait.until(
-            EC.element_to_be_clickable((By.CLASS_NAME, 'label')))
-        self.assertIn(label, elem.text)
+    def fill_option(self, label, value, next=True, buttonText="Next", type="multiple-choice-input", index="0"):
+        selector = f'//div[contains(@class,"label") and contains(.,"{label}")]'
+        response = self.check_if_exists(selector)
+        if response is False:
+            self.fail(f'Label {label} not found')
         if buttonText:
-            selector = f'//div[contains(@class,"radiobox") and contains(.,"{value}")]'
-            elem = self.wait.until(
-                EC.element_to_be_clickable((By.XPATH, selector)))
+            selector = f'//div[contains(@id, "{type+index}")]//div[contains(@class,"radiobox") and contains(.,"{value}")]'
+            elem = self.check_if_exists(selector)
+            if elem is False:
+                self.fail(f'Option {value} not found')
             elem.click()
             if next:
                 self.next()
@@ -102,33 +119,39 @@ class TestExamples(unittest.TestCase):
                 EC.element_to_be_clickable((By.XPATH, selector)))
             elem.click()
 
-    def fill_multiple_options(self, label, values, next=True):
-        elem = self.wait.until(
-            EC.element_to_be_clickable((By.CLASS_NAME, 'label')))
-        self.assertIn(label, elem.text)
-        for value in values:
-            selector = f'//div[contains(@class,"checkbox") and contains(.,"{value}")]'
-            elem = self.wait.until(
-                EC.element_to_be_clickable((By.XPATH, selector)))
-            elem.click()
-        if next:
-            self.next()
-
-    def fill_dropdown(self, label, value, next=True):
-        selector = f'//div[contains(@class,"label") and contains(.,"{label}")]'
-        self.check_if_exists(selector)
-        selector = f'//li[contains(@class,"vs__dropdown-option") and contains(.,"{value}")]'
-        elem = self.check_if_exists(selector)
-        elem.click()
-        if next:
-            self.next()
-
-    def fill_card(self, label, value, next=True):
+    def fill_multiple_options(self, label, values, next=True, type="multiple-choice-input", index="0"):
         selector = f'//div[contains(@class,"label") and contains(.,"{label}")]'
         response = self.check_if_exists(selector)
         if response is False:
             self.fail(f'Label {label} not found')
-        selector = f'//h3[contains(@class,"card-title") and contains(.,"{value}")]'
+        for value in values:
+            selector = f'//div[contains(@id, "{type+index}")]//div[contains(@class,"checkbox") and contains(.,"{value}")]'
+            elem = self.check_if_exists(selector)
+            if elem is False:
+                self.fail(f'Option {value} not found')
+            elem.click()
+        if next:
+            self.next()
+
+    def fill_dropdown(self, label, value, next=True, type="dropdown-input", index="0"):
+        selector = f'//div[contains(@class,"label") and contains(.,"{label}")]'
+        response = self.check_if_exists(selector)
+        if response is False:
+            self.fail(f'Label {label} not found')
+        selector = f'//div[contains(@id, "{type+index}")]//li[contains(@class,"vs__dropdown-option") and contains(.,"{value}")]'
+        elem = self.check_if_exists(selector)
+        if elem is False:
+            self.fail(f'Dropdown {value} not found')
+        elem.click()
+        if next:
+            self.next()
+
+    def fill_card(self, label, value, next=True, type="cards-input", index="0"):
+        selector = f'//div[contains(@class,"label") and contains(.,"{label}")]'
+        response = self.check_if_exists(selector)
+        if response is False:
+            self.fail(f'Label {label} not found')
+        selector = f'//div[contains(@id, "{type+index}")]//h3[contains(@class,"card-title") and contains(.,"{value}")]'
         elem = self.check_if_exists(selector)
         if elem is False:
             self.fail(f'Card {value} not found')
@@ -162,7 +185,7 @@ class TestExamples(unittest.TestCase):
         self.expect_text('1 + 2 = 3')
         self.fill_option('2x + 6y = 22, x + y = 5', '2')
         self.expect_text('Great job')
-        self.fill_text('Find the sum', '55')
+        self.fill_text('Find the sum', '55', type='number-input')
         self.expect_text('I see you, smarty-pants!')
         self.expect_text('I can feel our day')
         self.expect_text('Give me a spin')
@@ -182,26 +205,29 @@ class TestExamples(unittest.TestCase):
         self.fill_text('Welcome to Dr', 'Abstra')
         self.fill_text('What is your last name?', 'Bot')
         self.fill_text('What is your middle initial?', '')
-        self.fill_text('Ok. What is your email?', 'testing@abstra.app')
+        self.fill_text('Ok. What is your email?', 'abstra@bot.com')
         self.fill_date('What is your date of birth, Abstra', '30/05/2022')
         self.fill_dropdown('In which country do you currently live?', 'Brazil')
         self.fill_dropdown(
             'In which city do you currently live?', 'Rio de Janeiro')
         self.fill_text(
             'Ok! Please add your street address in Brazil.', 'Rua Teste Numero Teste')
-        self.fill_text("And what's the number?", 10)
+        self.fill_text("And what's the number?", 10, type='number-input')
         self.fill_text('Apartment or unit:', 'teste 21231')
-        self.fill_text('Zip code:', '123123121231')
+        self.fill_text('Zip code:', '123123121231', type='number-input')
         self.fill_phone('What is your primary phone number?', '11999999999')
         self.fill_option(
             'What type of identification can you provide?', "driver's license")
-        self.fill_text('What is the identification number?', '123121231')
+        self.fill_text('What is the identification number?',
+                       '123121231', type='number-input')
         self.fill_date(
             'What is the identification expiration date?', '30/05/2022')
         self.expect_text(
             "We're done with personal info! Let's move on to your medical history.")
-        self.fill_text('What is your last known weight, in kilograms?', '70')
-        self.fill_text('What is your height, in centimeters?', '180')
+        self.fill_text(
+            'What is your last known weight, in kilograms?', '70', type='number-input')
+        self.fill_text('What is your height, in centimeters?',
+                       '180', type='number-input')
         self.fill_option("Are you under a physician's care now?", 'yes')
         self.fill_textarea(
             'Please state the main reason you are under medical care at the moment.', 'aaaaaaaaaaaa')
@@ -241,7 +267,8 @@ class TestExamples(unittest.TestCase):
         self.expect_text('Hi! Welcome to our Purchase Requester.')
         self.fill_text('What is the title of this expense?',
                        'Figura de ação do naruto')
-        self.fill_text('How much was this expense?', '100')
+        self.fill_text('How much was this expense?',
+                       '100', type='number-input')
         self.fill_option('Is this a monthly recurring expense?', 'no')
         self.fill_option(
             'To which department does this expense belong?', 'Engineering')
@@ -272,8 +299,8 @@ class TestExamples(unittest.TestCase):
         self.expect_text(
             "Now, let's calculate terms for a new invoice.", False)
         self.fill_text(
-            'What is the total value of this invoice?', '500', False)
-        self.fill_date('When is this invoice due?', '30/05/2022')
+            'What is the total value of this invoice?', '500', False, index="1", type='number-input')
+        self.fill_date('When is this invoice due?', '30/05/2022', index="2")
         self.fill_dropdown(
             'Choose a supplier from this list to calculate risk multiplier.', 'Mediocre Thing Doer')
         self.expect_text(
@@ -297,9 +324,12 @@ class TestExamples(unittest.TestCase):
         self.expect_text(
             'Thank you for showing interest in our standard plan. We need some informations to get in touch.')
         self.fill_text('Name', 'Abstra Bot')
-        self.fill_text('Email', 'testing@abstra.app',
-                       placeholder="Your email here")
+        self.fill_text('Email', 'email@abstra.app',
+                       placeholder="Your email here", type='email-input')
         self.fill_text('Company name', 'Abstra')
+        self.expect_text(
+            "We've got your information, we'll get in contact soon! 😉", False)
+        self.driver.close()
 
     def test_subscribe_to_feature(self):
         self.driver = webdriver.Chrome()
@@ -316,7 +346,7 @@ class TestExamples(unittest.TestCase):
             "We're almost ready to launch. Let's sign you up to get the news first-hand.")
         self.fill_text('Firstly, what is your first name?', 'Abstra')
         self.fill_text('What is your last name?', 'Bot')
-        self.fill_text("Great! What's your email?", 'testing@abstra.app')
+        self.fill_text("Great! What's your email?", 'email@abstra.app')
         self.expect_text(
             "All set, Abstra! You'll be notified as soon as we launch 😎🚀", False)
         self.driver.close()
@@ -359,7 +389,8 @@ class TestExamples(unittest.TestCase):
         self.fill_option(
             'Do you want to generate a single certificate or multiple, from a spreadsheet?', 'single', buttonText=None)
         self.fill_text('What is the course name?', 'Python')
-        self.fill_text('How many hours does this course account for?', '10')
+        self.fill_text(
+            'How many hours does this course account for?', '10', type='number-input')
         self.fill_date('What date should be on the certificate?', '2020-01-01')
         self.fill_text("What is the student's full name?", 'Abstra Bot')
         self.expect_text('All done! Your certificate is ready! 🧑‍🎓', False)
@@ -391,6 +422,30 @@ class TestExamples(unittest.TestCase):
             "Love to see it. We're sending an email to connect you and the company right now. Be sure to check your inbox in the next few minutes.")
         self.expect_link('If you have any questions, you can get in touch with us here.',
                          'https://meetings.hubspot.com/sophia-faria/abstra-cloud-onboarding')
+        self.driver.close()
+
+    def test_tax_calculator(self):
+        self.driver = webdriver.Chrome()
+        self.wait = WebDriverWait(self.driver, 10)
+
+        self.driver.get(
+            f"{EXAMPLE_DOMAIN}/cbdc145f-608d-4a13-a796-641f728aa6ee")
+        self.wait.until(EC.title_is('Tax calculator'))
+        self.next()
+
+        self.expect_text('Hello! Fill in the data below:', False)
+        self.fill_text('Invoice value without taxes (BRL)',
+                       '100', False, index="1")
+        self.fill_text('Cofins (%)', '5', False, index="2")
+        self.fill_text('Csll (%)', '5', False, index="3")
+        self.fill_text('Irpj (%)', '25', False, index="4")
+        self.fill_text('Pis (%)', '10', index="5")
+        self.expect_text(
+            'Invoice value with taxes: R$ 181.82', False)
+        self.expect_text('Cofins: R$ 9.09', False)
+        self.expect_text('Csll: R$ 9.09', False)
+        self.expect_text('Irpj: R$ 45.45', False)
+        self.expect_text('Pis: R$ 18.18')
         self.driver.close()
 
 
