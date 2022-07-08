@@ -182,7 +182,7 @@ class TestExamples(unittest.TestCase):
         self.fill_text('Welcome to Dr', 'Abstra')
         self.fill_text('What is your last name?', 'Bot')
         self.fill_text('What is your middle initial?', '')
-        self.fill_text('Ok. What is your email?', 'abstra@bot.com')
+        self.fill_text('Ok. What is your email?', 'testing@abstra.app')
         self.fill_date('What is your date of birth, Abstra', '30/05/2022')
         self.fill_dropdown('In which country do you currently live?', 'Brazil')
         self.fill_dropdown(
@@ -297,7 +297,7 @@ class TestExamples(unittest.TestCase):
         self.expect_text(
             'Thank you for showing interest in our standard plan. We need some informations to get in touch.')
         self.fill_text('Name', 'Abstra Bot')
-        self.fill_text('Email', 'abstra_bot@teste.com',
+        self.fill_text('Email', 'testing@abstra.app',
                        placeholder="Your email here")
         self.fill_text('Company name', 'Abstra')
 
@@ -316,7 +316,7 @@ class TestExamples(unittest.TestCase):
             "We're almost ready to launch. Let's sign you up to get the news first-hand.")
         self.fill_text('Firstly, what is your first name?', 'Abstra')
         self.fill_text('What is your last name?', 'Bot')
-        self.fill_text("Great! What's your email?", 'abstra_bot@teste.com')
+        self.fill_text("Great! What's your email?", 'testing@abstra.app')
         self.expect_text(
             "All set, Abstra! You'll be notified as soon as we launch 😎🚀", False)
         self.driver.close()
