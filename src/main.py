@@ -236,8 +236,7 @@ class TestExamples(unittest.TestCase):
         self.fill_phone('What is your primary phone number?', '11999999999')
         self.fill_option(
             'What type of identification can you provide?', "driver's license")
-        self.fill_text('What is the identification number?',
-                       '123121231', type='number-input')
+        self.fill_text('What is the identification number?', '123121231')
         self.fill_date(
             'What is the identification expiration date?', '30/05/2022')
         self.expect_text(
@@ -477,7 +476,7 @@ class TestExamples(unittest.TestCase):
 
     #     self.expect_text('Hey there.')
     #     self.fill_file('Upload your .xlsx file',
-    #                    '/Users/leonardoribeiro/Downloads/tests-example.xls')
+    #                    'XLS_FILE_PATH')
     #     self.expect_text(
     #         "All your savings income info has been inputed. Simple as that", False)
     #     self.driver.close()
