@@ -298,7 +298,7 @@ class TestExamples(unittest.TestCase):
         self.expect_text(
             "Love to see it. We're sending an email to connect you and the company right now. Be sure to check your inbox in the next few minutes.")
         self.expect_link('If you have any questions, you can get in touch with us here.',
-    #                      'https://meetings.hubspot.com/sophia-faria/abstra-cloud-onboarding')
+                         'https://meetings.hubspot.com/sophia-faria/abstra-cloud-onboarding')
 
     def test_vacation_approval(self):  # ❌
         self.driver.get(
