@@ -191,6 +191,11 @@ class TestExamples(unittest.TestCase):
         if elem is False:
             self.fail(f'File input not found')
         elem.send_keys(value)
+        selector = f'//div[contains(@id, "{type+index}")]//div[contains(@class,"filename")]'
+        elem = self.check_if_exists(selector)
+        if elem is False:
+            self.fail(f'Could not upload file')
+
         if next:
             self.next()
 
