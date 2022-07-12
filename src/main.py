@@ -6,8 +6,7 @@ from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 EXAMPLE_DOMAIN = "https://examples.abstra.run"
-ABSTRA_SELENIUM_URL = os.getenv(
-    "ABSTRA_SELENIUM_URL", 'https://selenium.abstra.cloud/wd/hub')
+ABSTRA_SELENIUM_URL = os.getenv("ABSTRA_SELENIUM_URL")
 
 
 class TestExamples(unittest.TestCase):
@@ -20,7 +19,7 @@ class TestExamples(unittest.TestCase):
                 command_executor=ABSTRA_SELENIUM_URL, options=options)
         else:
             self.driver = webdriver.Chrome()
-        self.wait = WebDriverWait(self.driver, 50)
+        self.wait = WebDriverWait(self.driver, 15)
 
     def tearDown(self) -> None:
         self.driver.quit()
@@ -32,8 +31,8 @@ class TestExamples(unittest.TestCase):
             return elem
         except:
             return False
-        finally:
-            self.driver.save_screenshot('screen.png')
+        # finally:
+            # self.driver.save_screenshot('screen.png')
 
     def expect_text(self, content, next=True):
         selector = f'//div[contains(@class,"text") and contains(.,"{content}")]'
@@ -300,6 +299,26 @@ class TestExamples(unittest.TestCase):
         self.expect_link('If you have any questions, you can get in touch with us here.',
                          'https://meetings.hubspot.com/sophia-faria/abstra-cloud-onboarding')
 
+    def test_tax_calculator(self):  # ✅ / ❌
+        self.driver.get(
+            f"{EXAMPLE_DOMAIN}/cbdc145f-608d-4a13-a796-641f728aa6ee")
+        self.wait.until(EC.title_is('Tax calculator'))
+        self.next()
+
+        self.expect_text('Hello! Fill in the data below:', False)
+        self.fill_text('Invoice value without taxes (BRL)',
+                       '100', False, index="1")
+        self.fill_text('Cofins (%)', '5', False, index="2")
+        self.fill_text('Csll (%)', '5', False, index="3")
+        self.fill_text('Irpj (%)', '25', False, index="4")
+        self.fill_text('Pis (%)', '10', index="5")
+        self.expect_text(
+            'Invoice value with taxes: R$ 181.82', False)
+        self.expect_text('Cofins: R$ 9.09', False)
+        self.expect_text('Csll: R$ 9.09', False)
+        self.expect_text('Irpj: R$ 45.45', False)
+        self.expect_text('Pis: R$ 18.18')
+
     def test_vacation_approval(self):  # ❌
         self.driver.get(
             f"{EXAMPLE_DOMAIN}/842f9872-59fd-4735-8b9a-4e6f5065a96e")
@@ -433,26 +452,6 @@ class TestExamples(unittest.TestCase):
         self.fill_text("What is the student's full name?", 'Abstra Bot')
         self.expect_text('All done! Your certificate is ready! 🧑‍🎓', False)
         self.expect_file('Download here', 'generated_certificate.docx')
-
-    def test_tax_calculator(self):  # ❌
-        self.driver.get(
-            f"{EXAMPLE_DOMAIN}/cbdc145f-608d-4a13-a796-641f728aa6ee")
-        self.wait.until(EC.title_is('Tax calculator'))
-        self.next()
-
-        self.expect_text('Hello! Fill in the data below:', False)
-        self.fill_text('Invoice value without taxes (BRL)',
-                       '100', False, index="1")
-        self.fill_text('Cofins (%)', '5', False, index="2")
-        self.fill_text('Csll (%)', '5', False, index="3")
-        self.fill_text('Irpj (%)', '25', False, index="4")
-        self.fill_text('Pis (%)', '10', index="5")
-        self.expect_text(
-            'Invoice value with taxes: R$ 181.82', False)
-        self.expect_text('Cofins: R$ 9.09', False)
-        self.expect_text('Csll: R$ 9.09', False)
-        self.expect_text('Irpj: R$ 45.45', False)
-        self.expect_text('Pis: R$ 18.18')
 
     def test_customer_registration(self):  # ❌
         self.driver.get(
