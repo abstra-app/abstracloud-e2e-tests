@@ -1,14 +1,29 @@
+import os
 import unittest
 from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 EXAMPLE_DOMAIN = "https://examples.abstra.run"
+ABSTRA_SELENIUM_URL = os.getenv("ABSTRA_SELENIUM_URL")
 
 
 class TestExamples(unittest.TestCase):
+
+    def setUp(self) -> None:
+        if ABSTRA_SELENIUM_URL:
+            options = webdriver.ChromeOptions()
+            options.add_argument("--no-sandbox")
+            self.driver = webdriver.Remote(
+                command_executor=ABSTRA_SELENIUM_URL, options=options)
+        else:
+            self.driver = webdriver.Chrome()
+        self.wait = WebDriverWait(self.driver, 10)
+
+    def tearDown(self) -> None:
+        self.driver.quit()
+
     def check_if_exists(self, selector):
         try:
             elem = self.wait.until(
@@ -183,9 +198,6 @@ class TestExamples(unittest.TestCase):
         elem.click()
 
     def test_simple_quiz(self):
-        self.driver = webdriver.Chrome()
-        self.wait = WebDriverWait(self.driver, 10)
-
         self.driver.get(
             f"{EXAMPLE_DOMAIN}/8e174c9a-ffe7-44fe-9950-ceafbd7c4bec")
         self.wait.until(EC.title_is('Simple quiz'))
@@ -209,12 +221,8 @@ class TestExamples(unittest.TestCase):
         self.expect_text('Give me a spin')
         self.expect_link('Try Abstra Cloud free now', 'abstracloud.com')
         self.expect_text('Thank you', False)
-        self.driver.close()
 
     def test_self_checkin(self):
-        self.driver = webdriver.Chrome()
-        self.wait = WebDriverWait(self.driver, 10)
-
         self.driver.get(
             f"{EXAMPLE_DOMAIN}/b0a39028-1988-42c8-b04b-b230c70c9bb3")
         self.wait.until(EC.title_is('Self check-in'))
@@ -270,12 +278,8 @@ class TestExamples(unittest.TestCase):
         self.fill_text("Please confirm that you've answered this form with the truth to the best of your knowledge by typing your full name EXACTLY as follows: Abstra Bot", 'Abstra Bot')
         self.expect_text(
             "Thanks, Abstra Bot! You're checked in and ready to go.", False)
-        self.driver.close()
 
     def test_purchase_requester(self):
-        self.driver = webdriver.Chrome()
-        self.wait = WebDriverWait(self.driver, 10)
-
         self.driver.get(
             f"{EXAMPLE_DOMAIN}/f036497f-4069-4010-b7a8-2ebed126d872")
         self.wait.until(EC.title_is('Purchase Requester'))
@@ -295,12 +299,8 @@ class TestExamples(unittest.TestCase):
         self.fill_date('When is this expense due?', '30/05/2022')
         self.expect_text(
             "We've registered this expense succesfully. Thanks! See ya next time.", False)
-        self.driver.close()
 
     def test_invoice_factoring_calculator(self):
-        self.driver = webdriver.Chrome()
-        self.wait = WebDriverWait(self.driver, 10)
-
         self.driver.get(
             f"{EXAMPLE_DOMAIN}/56aee472-37a9-49e7-8f4b-9460c84dbc92")
         self.wait.until(EC.title_is('Invoice Factoring Calculator'))
@@ -327,12 +327,7 @@ class TestExamples(unittest.TestCase):
         self.expect_text(
             'The amount payable for this invoice is $510.0.', False)
 
-        self.driver.close()
-
     def test_buying_intention_form(self):
-        self.driver = webdriver.Chrome()
-        self.wait = WebDriverWait(self.driver, 10)
-
         self.driver.get(
             f"{EXAMPLE_DOMAIN}/2ef3700b-9d75-49bb-9c60-7924a0cb8c19")
         self.wait.until(EC.title_is('Upgrade Abstra Cloud'))
@@ -346,12 +341,8 @@ class TestExamples(unittest.TestCase):
         self.fill_text('Company name', 'Abstra')
         self.expect_text(
             "We've got your information, we'll get in contact soon! 😉", False)
-        self.driver.close()
 
     def test_subscribe_to_feature(self):
-        self.driver = webdriver.Chrome()
-        self.wait = WebDriverWait(self.driver, 10)
-
         self.driver.get(
             f"{EXAMPLE_DOMAIN}/b871dce9-8a1d-4511-aa64-cc857e7a3950")
         self.wait.until(EC.title_is('Subscribe to Feature'))
@@ -366,12 +357,8 @@ class TestExamples(unittest.TestCase):
         self.fill_text("Great! What's your email?", 'email@abstra.app')
         self.expect_text(
             "All set, Abstra! You'll be notified as soon as we launch 😎🚀", False)
-        self.driver.close()
 
     def test_vacation_approval(self):
-        self.driver = webdriver.Chrome()
-        self.wait = WebDriverWait(self.driver, 10)
-
         self.driver.get(
             f"{EXAMPLE_DOMAIN}/842f9872-59fd-4735-8b9a-4e6f5065a96e")
         self.wait.until(EC.title_is('Vacation Approval'))
@@ -388,12 +375,8 @@ class TestExamples(unittest.TestCase):
         self.expect_text("We've registered your approval successfully!")
         self.expect_link("Click here to add Abby's vacation to your calendar",
                          'https://calendar.google.com/calendar/render?action=TEMPLATE&dates=20220818%2F20220902&details=Enjoy%21&text=Abby%27s+Vacation')
-        self.driver.close()
 
     def test_certificate_maker(self):
-        self.driver = webdriver.Chrome()
-        self.wait = WebDriverWait(self.driver, 10)
-
         self.driver.get(
             f"{EXAMPLE_DOMAIN}/82f4a14b-1494-4818-8455-cb6c76af08eb")
         self.wait.until(EC.title_is('Certificate Maker'))
@@ -412,12 +395,8 @@ class TestExamples(unittest.TestCase):
         self.fill_text("What is the student's full name?", 'Abstra Bot')
         self.expect_text('All done! Your certificate is ready! 🧑‍🎓', False)
         self.expect_file('Download here', 'generated_certificate.docx')
-        self.driver.close()
 
     def test_dev_marketplace(self):
-        self.driver = webdriver.Chrome()
-        self.wait = WebDriverWait(self.driver, 10)
-
         self.driver.get(
             f"{EXAMPLE_DOMAIN}/33ddb3d0-af07-4f35-84fb-65e30125fd06")
         self.wait.until(EC.title_is('Dev Marketplace'))
@@ -439,12 +418,8 @@ class TestExamples(unittest.TestCase):
             "Love to see it. We're sending an email to connect you and the company right now. Be sure to check your inbox in the next few minutes.")
         self.expect_link('If you have any questions, you can get in touch with us here.',
                          'https://meetings.hubspot.com/sophia-faria/abstra-cloud-onboarding')
-        self.driver.close()
 
     def test_tax_calculator(self):
-        self.driver = webdriver.Chrome()
-        self.wait = WebDriverWait(self.driver, 10)
-
         self.driver.get(
             f"{EXAMPLE_DOMAIN}/cbdc145f-608d-4a13-a796-641f728aa6ee")
         self.wait.until(EC.title_is('Tax calculator'))
@@ -463,12 +438,8 @@ class TestExamples(unittest.TestCase):
         self.expect_text('Csll: R$ 9.09', False)
         self.expect_text('Irpj: R$ 45.45', False)
         self.expect_text('Pis: R$ 18.18')
-        self.driver.close()
 
     # def test_insert_saving_incomes(self):
-    #     self.driver = webdriver.Chrome()
-    #     self.wait = WebDriverWait(self.driver, 10)
-
     #     self.driver.get(
     #         f"{EXAMPLE_DOMAIN}/9636b0b4-7cdc-4ae7-9762-8f939555d2f9")
     #     self.wait.until(EC.title_is('Insert income savings'))
@@ -479,12 +450,8 @@ class TestExamples(unittest.TestCase):
     #                    'XLS_FILE_PATH')
     #     self.expect_text(
     #         "All your savings income info has been inputed. Simple as that", False)
-    #     self.driver.close()
 
     def test_customer_registration(self):
-        self.driver = webdriver.Chrome()
-        self.wait = WebDriverWait(self.driver, 10)
-
         self.driver.get(
             f"{EXAMPLE_DOMAIN}/81e15ebb-40bf-444e-8c83-35aafbc033b9")
         self.wait.until(EC.title_is('Customer registration'))
@@ -502,7 +469,6 @@ class TestExamples(unittest.TestCase):
         self.fill_date('Registration date', '2020-01-01', index="6")
         self.expect_text(
             'Perfecto. Your new customer has been registered 😎', False)
-        self.driver.close()
 
 
 if __name__ == '__main__':
