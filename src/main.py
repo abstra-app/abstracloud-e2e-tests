@@ -31,8 +31,8 @@ class TestExamples(unittest.TestCase):
             return elem
         except:
             return False
-        # finally:
-            # self.driver.save_screenshot('screen.png')
+        finally:
+            self.driver.save_screenshot('screen.png')
 
     def expect_text(self, content, next=True):
         selector = f'//div[contains(@class,"text") and contains(.,"{content}")]'
@@ -216,7 +216,61 @@ class TestExamples(unittest.TestCase):
         self.fill_text('Briefly describe what this expense is for.',
                        'Melhorar a moral da equipe')
         self.fill_option('What type of expense is this?', 'misc')
-        self.fill_date('When is this expense due?', '05/30/2022')
+        self.fill_date('When is this expense due?', '01/03/2022')
+        self.expect_text(
+            "We've registered this expense succesfully. Thanks! See ya next time.", False)
+
+    def test_simple_quiz(self):  # ✅
+        self.driver.get(
+            f"{EXAMPLE_DOMAIN}/8e174c9a-ffe7-44fe-9950-ceafbd7c4bec")
+        self.wait.until(EC.title_is('Simple quiz'))
+        self.next()
+
+        self.expect_text('Hey, there')
+        self.driver.get(
+            f"{EXAMPLE_DOMAIN}/f036497f-4069-4010-b7a8-2ebed126d872")
+        self.wait.until(EC.title_is('Purchase Requester'))
+        self.next()
+
+        self.expect_text('Hi! Welcome to our Purchase Requester.')
+        self.fill_text('What is the title of this expense?',
+                       'Figura de ação do naruto')
+        self.fill_text('How much was this expense?',
+                       '100', type='number-input')
+        self.fill_option('Is this a monthly recurring expense?', 'no')
+        self.fill_option(
+            'To which department does this expense belong?', 'Engineering')
+        self.fill_text('Briefly describe what this expense is for.',
+                       'Melhorar a moral da equipe')
+        self.fill_option('What type of expense is this?', 'misc')
+        self.fill_date('When is this expense due?', '01/03/2022')
+        self.expect_text(
+            "We've registered this expense succesfully. Thanks! See ya next time.", False)
+
+    def test_simple_quiz(self):  # ✅
+        self.driver.get(
+            f"{EXAMPLE_DOMAIN}/8e174c9a-ffe7-44fe-9950-ceafbd7c4bec")
+        self.wait.until(EC.title_is('Simple quiz'))
+        self.next()
+
+        self.expect_text('Hey, there')
+        self.driver.get(
+            f"{EXAMPLE_DOMAIN}/f036497f-4069-4010-b7a8-2ebed126d872")
+        self.wait.until(EC.title_is('Purchase Requester'))
+        self.next()
+
+        self.expect_text('Hi! Welcome to our Purchase Requester.')
+        self.fill_text('What is the title of this expense?',
+                       'Figura de ação do naruto')
+        self.fill_text('How much was this expense?',
+                       '100', type='number-input')
+        self.fill_option('Is this a monthly recurring expense?', 'no')
+        self.fill_option(
+            'To which department does this expense belong?', 'Engineering')
+        self.fill_text('Briefly describe what this expense is for.',
+                       'Melhorar a moral da equipe')
+        self.fill_option('What type of expense is this?', 'misc')
+        self.fill_date('When is this expense due?', '01/03/2022')
         self.expect_text(
             "We've registered this expense succesfully. Thanks! See ya next time.", False)
 
@@ -345,7 +399,7 @@ class TestExamples(unittest.TestCase):
 
         self.expect_text('Hey there.')
         self.fill_file('Upload your .xlsx file',
-                       '/Users/felipereyel/Abstra/Downloads/tests-example.xls')
+                       '/Users/leonardoribeiro/Downloads/tests-example.xls')
         self.expect_text(
             "All your savings income info has been inputed. Simple as that", False)
 
@@ -359,7 +413,7 @@ class TestExamples(unittest.TestCase):
         self.fill_text('What is your last name?', 'Bot')
         self.fill_text('What is your middle initial?', '')
         self.fill_text('Ok. What is your email?', 'abstra@bot.com')
-        self.fill_date('What is your date of birth, Abstra', '05/30/2022')
+        self.fill_date('What is your date of birth, Abstra', '01/03/2022')
         self.fill_dropdown('In which country do you currently live?', 'Brazil')
         self.fill_dropdown(
             'In which city do you currently live?', 'Rio de Janeiro')
@@ -373,7 +427,7 @@ class TestExamples(unittest.TestCase):
             'What type of identification can you provide?', "driver's license")
         self.fill_text('What is the identification number?', '123121231')
         self.fill_date(
-            'What is the identification expiration date?', '05/30/2022')
+            'What is the identification expiration date?', '01/03/2022')
         self.expect_text(
             "We're done with personal info! Let's move on to your medical history.")
         self.fill_text(
@@ -423,7 +477,7 @@ class TestExamples(unittest.TestCase):
             "Now, let's calculate terms for a new invoice.", False)
         self.fill_text(
             'What is the total value of this invoice?', '500', False, index="1", type='number-input')
-        self.fill_date('When is this invoice due?', '30/05/2022', index="2")
+        self.fill_date('When is this invoice due?', '01/05/2022', index="2")
         self.fill_dropdown(
             'Choose a supplier from this list to calculate risk multiplier.', 'Mediocre Thing Doer')
         self.expect_text(
