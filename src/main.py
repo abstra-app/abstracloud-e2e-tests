@@ -31,8 +31,8 @@ class TestExamples(unittest.TestCase):
             return elem
         except:
             return False
-        finally:
-            self.driver.save_screenshot('screen.png')
+        # finally:
+        #     self.driver.save_screenshot('screen.png')
 
     def expect_text(self, content, next=True):
         selector = f'//div[contains(@class,"text") and contains(.,"{content}")]'
@@ -200,60 +200,6 @@ class TestExamples(unittest.TestCase):
         elem.click()
 
     def test_purchase_requester(self):  # ✅
-        self.driver.get(
-            f"{EXAMPLE_DOMAIN}/f036497f-4069-4010-b7a8-2ebed126d872")
-        self.wait.until(EC.title_is('Purchase Requester'))
-        self.next()
-
-        self.expect_text('Hi! Welcome to our Purchase Requester.')
-        self.fill_text('What is the title of this expense?',
-                       'Figura de ação do naruto')
-        self.fill_text('How much was this expense?',
-                       '100', type='number-input')
-        self.fill_option('Is this a monthly recurring expense?', 'no')
-        self.fill_option(
-            'To which department does this expense belong?', 'Engineering')
-        self.fill_text('Briefly describe what this expense is for.',
-                       'Melhorar a moral da equipe')
-        self.fill_option('What type of expense is this?', 'misc')
-        self.fill_date('When is this expense due?', '01/03/2022')
-        self.expect_text(
-            "We've registered this expense succesfully. Thanks! See ya next time.", False)
-
-    def test_simple_quiz(self):  # ✅
-        self.driver.get(
-            f"{EXAMPLE_DOMAIN}/8e174c9a-ffe7-44fe-9950-ceafbd7c4bec")
-        self.wait.until(EC.title_is('Simple quiz'))
-        self.next()
-
-        self.expect_text('Hey, there')
-        self.driver.get(
-            f"{EXAMPLE_DOMAIN}/f036497f-4069-4010-b7a8-2ebed126d872")
-        self.wait.until(EC.title_is('Purchase Requester'))
-        self.next()
-
-        self.expect_text('Hi! Welcome to our Purchase Requester.')
-        self.fill_text('What is the title of this expense?',
-                       'Figura de ação do naruto')
-        self.fill_text('How much was this expense?',
-                       '100', type='number-input')
-        self.fill_option('Is this a monthly recurring expense?', 'no')
-        self.fill_option(
-            'To which department does this expense belong?', 'Engineering')
-        self.fill_text('Briefly describe what this expense is for.',
-                       'Melhorar a moral da equipe')
-        self.fill_option('What type of expense is this?', 'misc')
-        self.fill_date('When is this expense due?', '01/03/2022')
-        self.expect_text(
-            "We've registered this expense succesfully. Thanks! See ya next time.", False)
-
-    def test_simple_quiz(self):  # ✅
-        self.driver.get(
-            f"{EXAMPLE_DOMAIN}/8e174c9a-ffe7-44fe-9950-ceafbd7c4bec")
-        self.wait.until(EC.title_is('Simple quiz'))
-        self.next()
-
-        self.expect_text('Hey, there')
         self.driver.get(
             f"{EXAMPLE_DOMAIN}/f036497f-4069-4010-b7a8-2ebed126d872")
         self.wait.until(EC.title_is('Purchase Requester'))
