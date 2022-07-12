@@ -6,7 +6,8 @@ from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 EXAMPLE_DOMAIN = "https://examples.abstra.run"
-ABSTRA_SELENIUM_URL = os.getenv("ABSTRA_SELENIUM_URL")
+ABSTRA_SELENIUM_URL = os.getenv(
+    "ABSTRA_SELENIUM_URL", 'https://selenium.abstra.cloud/wd/hub')
 
 
 class TestExamples(unittest.TestCase):
@@ -19,7 +20,7 @@ class TestExamples(unittest.TestCase):
                 command_executor=ABSTRA_SELENIUM_URL, options=options)
         else:
             self.driver = webdriver.Chrome()
-        self.wait = WebDriverWait(self.driver, 10)
+        self.wait = WebDriverWait(self.driver, 50)
 
     def tearDown(self) -> None:
         self.driver.quit()
@@ -31,6 +32,8 @@ class TestExamples(unittest.TestCase):
             return elem
         except:
             return False
+        finally:
+            self.driver.save_screenshot('screen.png')
 
     def expect_text(self, content, next=True):
         selector = f'//div[contains(@class,"text") and contains(.,"{content}")]'
@@ -197,7 +200,28 @@ class TestExamples(unittest.TestCase):
             (By.CLASS_NAME, 'next-button')))
         elem.click()
 
-    def test_simple_quiz(self):
+    def test_purchase_requester(self):  # ✅
+        self.driver.get(
+            f"{EXAMPLE_DOMAIN}/f036497f-4069-4010-b7a8-2ebed126d872")
+        self.wait.until(EC.title_is('Purchase Requester'))
+        self.next()
+
+        self.expect_text('Hi! Welcome to our Purchase Requester.')
+        self.fill_text('What is the title of this expense?',
+                       'Figura de ação do naruto')
+        self.fill_text('How much was this expense?',
+                       '100', type='number-input')
+        self.fill_option('Is this a monthly recurring expense?', 'no')
+        self.fill_option(
+            'To which department does this expense belong?', 'Engineering')
+        self.fill_text('Briefly describe what this expense is for.',
+                       'Melhorar a moral da equipe')
+        self.fill_option('What type of expense is this?', 'misc')
+        self.fill_date('When is this expense due?', '05/30/2022')
+        self.expect_text(
+            "We've registered this expense succesfully. Thanks! See ya next time.", False)
+
+    def test_simple_quiz(self):  # ✅
         self.driver.get(
             f"{EXAMPLE_DOMAIN}/8e174c9a-ffe7-44fe-9950-ceafbd7c4bec")
         self.wait.until(EC.title_is('Simple quiz'))
@@ -222,7 +246,91 @@ class TestExamples(unittest.TestCase):
         self.expect_link('Try Abstra Cloud free now', 'abstracloud.com')
         self.expect_text('Thank you', False)
 
-    def test_self_checkin(self):
+    def test_buying_intention_form(self):  # ✅
+        self.driver.get(
+            f"{EXAMPLE_DOMAIN}/2ef3700b-9d75-49bb-9c60-7924a0cb8c19")
+        self.wait.until(EC.title_is('Upgrade Abstra Cloud'))
+        self.next()
+
+        self.expect_text(
+            'Thank you for showing interest in our standard plan. We need some informations to get in touch.')
+        self.fill_text('Name', 'Abstra Bot')
+        self.fill_text('Email', 'email@abstra.app',
+                       placeholder="Your email here", type='email-input')
+        self.fill_text('Company name', 'Abstra')
+        self.expect_text(
+            "We've got your information, we'll get in contact soon! 😉", False)
+
+    def test_subscribe_to_feature(self):  # ✅
+        self.driver.get(
+            f"{EXAMPLE_DOMAIN}/b871dce9-8a1d-4511-aa64-cc857e7a3950")
+        self.wait.until(EC.title_is('Subscribe to Feature'))
+        self.next()
+
+        self.expect_text(
+            'Hi there. Thanks for your interest in our upcoming features!')
+        self.expect_text(
+            "We're almost ready to launch. Let's sign you up to get the news first-hand.")
+        self.fill_text('Firstly, what is your first name?', 'Abstra')
+        self.fill_text('What is your last name?', 'Bot')
+        self.fill_text("Great! What's your email?", 'email@abstra.app')
+        self.expect_text(
+            "All set, Abstra! You'll be notified as soon as we launch 😎🚀", False)
+
+    def test_dev_marketplace(self):  # ✅
+        self.driver.get(
+            f"{EXAMPLE_DOMAIN}/33ddb3d0-af07-4f35-84fb-65e30125fd06")
+        self.wait.until(EC.title_is('Dev Marketplace'))
+        self.next()
+
+        self.expect_text('Hey there. Welcome to our marketplace.')
+        self.fill_option('What are you looking for today?',
+                         "I'm a dev, looking for a job opening")
+        self.fill_option("Very cool. What do you need?",
+                         "I'd like to check out the job board.")
+        self.fill_option(
+            'Do you want to view the whole board or add a filter?', 'Add a filter')
+        self.fill_option('What would you like to filter by?',
+                         'Seniority needed')
+        self.fill_dropdown('What is your seniority?', 'Senior')
+        self.fill_card(
+            'Select your desired job to get in touch with the company:', 'Database Tech')
+        self.expect_text(
+            "Love to see it. We're sending an email to connect you and the company right now. Be sure to check your inbox in the next few minutes.")
+        self.expect_link('If you have any questions, you can get in touch with us here.',
+    #                      'https://meetings.hubspot.com/sophia-faria/abstra-cloud-onboarding')
+
+    def test_vacation_approval(self):  # ❌
+        self.driver.get(
+            f"{EXAMPLE_DOMAIN}/842f9872-59fd-4735-8b9a-4e6f5065a96e")
+        self.wait.until(EC.title_is('Vacation Approval'))
+        self.next()
+
+        self.expect_text(
+            'Hi there! You have a new vacation request.')
+        self.expect_text(
+            'Abby from the Marketing team has requested 15 days of vacation, from 08/18/22 to 09/02/22.')
+        self.expect_text(
+            'They’ve taken 12 days off in the last 12 months and have 18 remaining days to request, according to company policy.')
+        self.fill_option(
+            'Do you approve this request for 15 days starting 08/18/22?', 'Yes')
+        self.expect_text("We've registered your approval successfully!")
+        self.expect_link("Click here to add Abby's vacation to your calendar",
+                         'https://calendar.google.com/calendar/render?action=TEMPLATE&dates=20220818%2F20220902&details=Enjoy%21&text=Abby%27s+Vacation')
+
+    def test_insert_saving_incomes(self):  # ❌
+        self.driver.get(
+            f"{EXAMPLE_DOMAIN}/9636b0b4-7cdc-4ae7-9762-8f939555d2f9")
+        self.wait.until(EC.title_is('Insert income savings'))
+        self.next()
+
+        self.expect_text('Hey there.')
+        self.fill_file('Upload your .xlsx file',
+                       '/Users/felipereyel/Abstra/Downloads/tests-example.xls')
+        self.expect_text(
+            "All your savings income info has been inputed. Simple as that", False)
+
+    def test_self_checkin(self):  # ❌
         self.driver.get(
             f"{EXAMPLE_DOMAIN}/b0a39028-1988-42c8-b04b-b230c70c9bb3")
         self.wait.until(EC.title_is('Self check-in'))
@@ -232,7 +340,7 @@ class TestExamples(unittest.TestCase):
         self.fill_text('What is your last name?', 'Bot')
         self.fill_text('What is your middle initial?', '')
         self.fill_text('Ok. What is your email?', 'abstra@bot.com')
-        self.fill_date('What is your date of birth, Abstra', '30/05/2022')
+        self.fill_date('What is your date of birth, Abstra', '05/30/2022')
         self.fill_dropdown('In which country do you currently live?', 'Brazil')
         self.fill_dropdown(
             'In which city do you currently live?', 'Rio de Janeiro')
@@ -246,7 +354,7 @@ class TestExamples(unittest.TestCase):
             'What type of identification can you provide?', "driver's license")
         self.fill_text('What is the identification number?', '123121231')
         self.fill_date(
-            'What is the identification expiration date?', '30/05/2022')
+            'What is the identification expiration date?', '05/30/2022')
         self.expect_text(
             "We're done with personal info! Let's move on to your medical history.")
         self.fill_text(
@@ -279,28 +387,7 @@ class TestExamples(unittest.TestCase):
         self.expect_text(
             "Thanks, Abstra Bot! You're checked in and ready to go.", False)
 
-    def test_purchase_requester(self):
-        self.driver.get(
-            f"{EXAMPLE_DOMAIN}/f036497f-4069-4010-b7a8-2ebed126d872")
-        self.wait.until(EC.title_is('Purchase Requester'))
-        self.next()
-
-        self.expect_text('Hi! Welcome to our Purchase Requester.')
-        self.fill_text('What is the title of this expense?',
-                       'Figura de ação do naruto')
-        self.fill_text('How much was this expense?',
-                       '100', type='number-input')
-        self.fill_option('Is this a monthly recurring expense?', 'no')
-        self.fill_option(
-            'To which department does this expense belong?', 'Engineering')
-        self.fill_text('Briefly describe what this expense is for.',
-                       'Melhorar a moral da equipe')
-        self.fill_option('What type of expense is this?', 'misc')
-        self.fill_date('When is this expense due?', '30/05/2022')
-        self.expect_text(
-            "We've registered this expense succesfully. Thanks! See ya next time.", False)
-
-    def test_invoice_factoring_calculator(self):
+    def test_invoice_factoring_calculator(self):  # ❌
         self.driver.get(
             f"{EXAMPLE_DOMAIN}/56aee472-37a9-49e7-8f4b-9460c84dbc92")
         self.wait.until(EC.title_is('Invoice Factoring Calculator'))
@@ -327,56 +414,7 @@ class TestExamples(unittest.TestCase):
         self.expect_text(
             'The amount payable for this invoice is $510.0.', False)
 
-    def test_buying_intention_form(self):
-        self.driver.get(
-            f"{EXAMPLE_DOMAIN}/2ef3700b-9d75-49bb-9c60-7924a0cb8c19")
-        self.wait.until(EC.title_is('Upgrade Abstra Cloud'))
-        self.next()
-
-        self.expect_text(
-            'Thank you for showing interest in our standard plan. We need some informations to get in touch.')
-        self.fill_text('Name', 'Abstra Bot')
-        self.fill_text('Email', 'email@abstra.app',
-                       placeholder="Your email here", type='email-input')
-        self.fill_text('Company name', 'Abstra')
-        self.expect_text(
-            "We've got your information, we'll get in contact soon! 😉", False)
-
-    def test_subscribe_to_feature(self):
-        self.driver.get(
-            f"{EXAMPLE_DOMAIN}/b871dce9-8a1d-4511-aa64-cc857e7a3950")
-        self.wait.until(EC.title_is('Subscribe to Feature'))
-        self.next()
-
-        self.expect_text(
-            'Hi there. Thanks for your interest in our upcoming features!')
-        self.expect_text(
-            "We're almost ready to launch. Let's sign you up to get the news first-hand.")
-        self.fill_text('Firstly, what is your first name?', 'Abstra')
-        self.fill_text('What is your last name?', 'Bot')
-        self.fill_text("Great! What's your email?", 'email@abstra.app')
-        self.expect_text(
-            "All set, Abstra! You'll be notified as soon as we launch 😎🚀", False)
-
-    def test_vacation_approval(self):
-        self.driver.get(
-            f"{EXAMPLE_DOMAIN}/842f9872-59fd-4735-8b9a-4e6f5065a96e")
-        self.wait.until(EC.title_is('Vacation Approval'))
-        self.next()
-
-        self.expect_text(
-            'Hi there! You have a new vacation request.')
-        self.expect_text(
-            'Abby from the Marketing team has requested 15 days of vacation, from 08/18/22 to 09/02/22.')
-        self.expect_text(
-            'They’ve taken 12 days off in the last 12 months and have 18 remaining days to request, according to company policy.')
-        self.fill_option(
-            'Do you approve this request for 15 days starting 08/18/22?', 'Yes')
-        self.expect_text("We've registered your approval successfully!")
-        self.expect_link("Click here to add Abby's vacation to your calendar",
-                         'https://calendar.google.com/calendar/render?action=TEMPLATE&dates=20220818%2F20220902&details=Enjoy%21&text=Abby%27s+Vacation')
-
-    def test_certificate_maker(self):
+    def test_certificate_maker(self):  # ❌
         self.driver.get(
             f"{EXAMPLE_DOMAIN}/82f4a14b-1494-4818-8455-cb6c76af08eb")
         self.wait.until(EC.title_is('Certificate Maker'))
@@ -396,30 +434,7 @@ class TestExamples(unittest.TestCase):
         self.expect_text('All done! Your certificate is ready! 🧑‍🎓', False)
         self.expect_file('Download here', 'generated_certificate.docx')
 
-    def test_dev_marketplace(self):
-        self.driver.get(
-            f"{EXAMPLE_DOMAIN}/33ddb3d0-af07-4f35-84fb-65e30125fd06")
-        self.wait.until(EC.title_is('Dev Marketplace'))
-        self.next()
-
-        self.expect_text('Hey there. Welcome to our marketplace.')
-        self.fill_option('What are you looking for today?',
-                         "I'm a dev, looking for a job opening")
-        self.fill_option("Very cool. What do you need?",
-                         "I'd like to check out the job board.")
-        self.fill_option(
-            'Do you want to view the whole board or add a filter?', 'Add a filter')
-        self.fill_option('What would you like to filter by?',
-                         'Seniority needed')
-        self.fill_dropdown('What is your seniority?', 'Senior')
-        self.fill_card(
-            'Select your desired job to get in touch with the company:', 'Database Tech')
-        self.expect_text(
-            "Love to see it. We're sending an email to connect you and the company right now. Be sure to check your inbox in the next few minutes.")
-        self.expect_link('If you have any questions, you can get in touch with us here.',
-                         'https://meetings.hubspot.com/sophia-faria/abstra-cloud-onboarding')
-
-    def test_tax_calculator(self):
+    def test_tax_calculator(self):  # ❌
         self.driver.get(
             f"{EXAMPLE_DOMAIN}/cbdc145f-608d-4a13-a796-641f728aa6ee")
         self.wait.until(EC.title_is('Tax calculator'))
@@ -439,19 +454,7 @@ class TestExamples(unittest.TestCase):
         self.expect_text('Irpj: R$ 45.45', False)
         self.expect_text('Pis: R$ 18.18')
 
-    # def test_insert_saving_incomes(self):
-    #     self.driver.get(
-    #         f"{EXAMPLE_DOMAIN}/9636b0b4-7cdc-4ae7-9762-8f939555d2f9")
-    #     self.wait.until(EC.title_is('Insert income savings'))
-    #     self.next()
-
-    #     self.expect_text('Hey there.')
-    #     self.fill_file('Upload your .xlsx file',
-    #                    'XLS_FILE_PATH')
-    #     self.expect_text(
-    #         "All your savings income info has been inputed. Simple as that", False)
-
-    def test_customer_registration(self):
+    def test_customer_registration(self):  # ❌
         self.driver.get(
             f"{EXAMPLE_DOMAIN}/81e15ebb-40bf-444e-8c83-35aafbc033b9")
         self.wait.until(EC.title_is('Customer registration'))
